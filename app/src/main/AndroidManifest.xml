@@ -24,6 +24,9 @@
                 android:name="com.kakao.vectormap.APP_KEY"
                 android:value="47dc23bd540343a458fdd1d1ac570e31"/>
         </activity>
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="ceh0sosrje" />
     </application>
 
 </manifest>
