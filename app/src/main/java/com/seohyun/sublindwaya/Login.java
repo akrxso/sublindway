@@ -18,8 +18,8 @@ import kotlin.jvm.functions.Function2;
 public class Login extends AppCompatActivity {
     private static final String TAG = "Login";
     private View loginButton, logoutButton;
-    private TextView nickName;
-    private ImageView profileImage;
+    private TextView userId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +28,8 @@ public class Login extends AppCompatActivity {
 
         loginButton = findViewById(R.id.login);
         logoutButton = findViewById(R.id.logout);
-        nickName = findViewById(R.id.nickname);
-        profileImage = findViewById(R.id.profile);
+        userId = findViewById(R.id.userId);
+
 
         // 카카오가 설치되어 있는지 확인 하는 메서드또한 카카오에서 제공 콜백 객체를 이용함
         Function2<OAuthToken, Throwable, Unit> callback = new  Function2<OAuthToken, Throwable, Unit>() {
@@ -80,23 +80,14 @@ public class Login extends AppCompatActivity {
                 if (user!=null){
 
                     // 유저의 아이디
-                    Log.d(TAG,"invoke: id" + user.getId());
-                    // 유저의 어카운트정보에 이메일
-                    Log.d(TAG,"invoke: nickname" + user.getKakaoAccount().getEmail());
-                    // 유저의 어카운트 정보의 프로파일에 닉네임
-                    Log.d(TAG,"invoke: email" + user.getKakaoAccount().getProfile().getNickname());
-                    // 유저의 어카운트 파일의 성별
-                    Log.d(TAG,"invoke: gerder" + user.getKakaoAccount().getGender());
-                    // 유저의 어카운트 정보에 나이
-                    Log.d(TAG,"invoke: age" + user.getKakaoAccount().getAgeRange());
+                    Log.d(TAG,"user id: " + user.getId());
 
-                    nickName.setText(user.getKakaoAccount().getProfile().getNickname());
+                    userId.setText(""+user.getId());
                     loginButton.setVisibility(View.GONE);
                     logoutButton.setVisibility(View.VISIBLE);
                 }else {
                     // 로그인이 되어 있지 않다면 위와 반대로
-                    nickName.setText(null);
-                    profileImage.setImageBitmap(null);
+                    userId.setText(null);
                     loginButton.setVisibility(View.VISIBLE);
                     logoutButton.setVisibility(View.GONE);
                 }
