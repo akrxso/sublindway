@@ -65,7 +65,7 @@ public class LocationTrackingActivity extends AppCompatActivity implements OnMap
                 lo=location.getLongitude();
 
                 Toast.makeText(getApplicationContext(),
-                        la+","+lo,Toast.LENGTH_SHORT).show();
+                        la+","+lo,Toast.LENGTH_SHORT).show(); //위도 경도를 토스트 메시지로 알려준다
             }
 
         });
