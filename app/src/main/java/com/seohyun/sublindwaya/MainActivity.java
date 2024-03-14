@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,17 +14,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        //카카오 로그인 구현
 
-        final Button button = findViewById(R.id.mapBtn);
-        button.setOnClickListener(new View.OnClickListener() {
+        final Button mapButton = findViewById(R.id.mapBtn);
+        mapButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, LocationTrackingActivity.class);
                 // 새로운 액티비티 시작
                 startActivity(intent);
             }
         });
-    }
 
+        final Button cameraButton = findViewById(R.id.cameraBtn);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CameraRecognition.class);
+                // 새로운 액티비티 시작
+                startActivity(intent);
+            }
+        });
+
+    }
 
 }
