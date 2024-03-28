@@ -23,6 +23,7 @@ public class TextToSpeech extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_to_speech);
 
+        // 텍스트를 음성으로 변환하기 위한 TextToSpeech 객체 생성
         tts = new android.speech.tts.TextToSpeech(this, new android.speech.tts.TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {

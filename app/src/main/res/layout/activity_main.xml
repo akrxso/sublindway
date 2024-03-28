@@ -17,6 +17,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/ttsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="음성인식"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mapBtn"
+        app:layout_constraintVertical_bias="0.201" />
+
+    <Button
         android:id="@+id/cameraBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -33,6 +33,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final Button ttsButton = findViewById(R.id.ttsBtn);
+        ttsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TextToSpeech.class);
+                // 새로운 액티비티 시작
+                startActivity(intent);
+            }
+        });
+
     }
 
 }
