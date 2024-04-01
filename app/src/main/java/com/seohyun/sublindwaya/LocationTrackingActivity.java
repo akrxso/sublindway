@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.naver.maps.map.LocationTrackingMode;
@@ -20,18 +21,51 @@ import com.naver.maps.map.NaverMapSdk;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.util.FusedLocationSource;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class LocationTrackingActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    Call<xy_model> call;
+    TextView textView;
     private NaverMap naverMap;
     private FusedLocationSource locationSource; //위치 반환
     private  static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
 
     private double la,lo; //위도 경도
 
+    public double getLatitude() {
+        return la;
+    }
+
+    public double getLongitude() {
+        return lo;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_location_tracking);
+
+        textView =findViewById(R.id.textView2);
+        call = Retrofit_subway.getApiService().test_api_get(getLatitude(),getLongitude());
+
+        call.enqueue(new Callback<xy_model>(){
+            @Override
+            public void onResponse(Call<xy_model> call, Response<xy_model> response) {
+                xy_model result = response.body();
+                String str;
+                str = result.getStation()+"\n";
+                textView.setText(str);
+            }
+
+            @Override
+            public void onFailure(Call<xy_model> call, Throwable t) {
+
+            }
+        });
 
         NaverMapSdk.getInstance(this).setClient(
                 new NaverMapSdk.NaverCloudPlatformClient("ceh0sosrje"));
