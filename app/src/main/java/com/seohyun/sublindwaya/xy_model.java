@@ -4,13 +4,13 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class xy_model {
-
-    @SerializedName("getStation")
+    //역이름 받아오기
+    @SerializedName("subwayName")
     @Expose
-    private String getStation;
+    private String subwayName;
 
-    public String getStation(){
-        return getStation;
+    public String getSubwayName(){
+        return subwayName;
     }
 
 }
