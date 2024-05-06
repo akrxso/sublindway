@@ -9,7 +9,7 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface Retrofit_subway_interface {
-    @GET("get-subway-name")
+    @GET("subway-name-by-location")
     Call<xy_model> test_api_get(
             @Query("locationX") double locationX,
             @Query("locationY") double locationY
