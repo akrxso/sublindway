@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 외부 저장소의 루트 디렉토리에 대한 접근을 허용 -->
-    <external-path
-        name="external_files"
-        path="." />
-
-    <!-- 앱의 외부 파일 디렉토리에 대한 접근을 허용 -->
-    <external-files-path
-        name="external_app_files"
-        path="." />
-
-    <!-- 앱의 내부 파일 디렉토리에 대한 접근을 허용 -->
-    <files-path
-        name="internal_files"
-        path="." />
-
-    <!-- 앱의 캐시 디렉토리에 대한 접근을 허용 -->
     <cache-path
-        name="cache_files"
-        path="." />
+        name="cache"
+        path="." /> <!--Context.getCacheDir() 내부 저장소-->
+    <files-path
+        name="files"
+        path="." /> <!--Context.getFilesDir() 내부 저장소-->
+
+    <external-path
+        name="external"
+        path="."/>  <!--  Environment.getExternalStorageDirectory() 외부 저장소-->
+    <external-cache-path
+        name="external-cache"
+        path="."/> <!--  Context.getExternalCacheDir() 외부 저장소-->
+    <external-files-path
+        name="external-files"
+        path="."/> <!--  Context.getExternalFilesDir() 외부 저장소-->
 </paths>
