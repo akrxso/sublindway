@@ -18,7 +18,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
@@ -48,7 +47,7 @@ public class CameraRecognition extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_recognition);
         if (ContextCompat.checkSelfPermission(this, CAMERA) != PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {CAMERA}, REQUEST_CAMERA_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{CAMERA}, REQUEST_CAMERA_PERMISSION);
         } else {
             dispatchTakePictureIntent();
         }
@@ -61,68 +60,51 @@ public class CameraRecognition extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
                 dispatchTakePictureIntent();
             } else {
-                Toast.makeText(this, "Camera permission is required to use this feature", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera permission is required to use this feature. Please enable it in settings.", Toast.LENGTH_LONG).show();
             }
         }
     }
-
-    private Uri getMostRecentPhotoUri() {
-        Uri externalUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = new String[] {
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.DATE_ADDED
-        };
-
-        try (Cursor cursor = getContentResolver().query(externalUri, projection, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC")) {
-            if (cursor != null && cursor.moveToFirst()) {
-                String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
-                return ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, Long.parseLong(id));
-            }
-        } catch (Exception e) {
-            Log.e("Camera", "Failed to query recent photo: " + e.getMessage());
-        }
-        return null;
-    }
-
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // 현재 시간을 기반으로 파일 이름 생성
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-            String fileName = "JPEG_" + timeStamp;
-
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/"); // 'Sublindwaya' 폴더 부분을 제거
-            values.put(MediaStore.Images.Media.TITLE, fileName); // 제목에 파일 이름 설정
-            values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName + ".jpg"); // 실제 파일 이름 설정
-            values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
-            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-
-            photoURI = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-            startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            try {
+                photoURI = createImageFileUri();
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            } catch (IOException ex) {
+                Log.e("Camera", "Error occurred while creating the File", ex);
+                Toast.makeText(this, "Failed to create image file.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
+    private Uri createImageFileUri() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String fileName = "JPEG_" + timeStamp;
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/");
+        values.put(MediaStore.Images.Media.TITLE, fileName);
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName + ".jpg");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        return getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             sendImageToServer(photoURI);
-            String message = "Image sent to server.";
-            Log.d("Camera", message);
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Image sent to server.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private byte[] compressImage(Uri imageUri) {
         try (InputStream inputStream = getContentResolver().openInputStream(imageUri)) {
             Bitmap original = BitmapFactory.decodeStream(inputStream);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            original.compress(Bitmap.CompressFormat.JPEG, 50, out); // 품질을 50%로 설정
+            original.compress(Bitmap.CompressFormat.JPEG, 50, out);
             return out.toByteArray();
         } catch (IOException e) {
             Log.e("Camera", "Compressing image failed", e);
@@ -133,7 +115,7 @@ public class CameraRecognition extends AppCompatActivity {
     private void sendImageToServer(Uri imageUri) {
         byte[] imageData = compressImage(imageUri);
         if (imageData == null) {
-            Toast.makeText(this, "이미지 압축에 실패했습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Failed to compress image.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -145,19 +127,20 @@ public class CameraRecognition extends AppCompatActivity {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                String message = response.isSuccessful() ? "이미지가 성공적으로 전송되었습니다" : "이미지 전송에 실패했습니다. Response code: " + response.code() + ", Message: " + response.message();
-                Log.d("Camera", message);
-                Toast.makeText(CameraRecognition.this, message, Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful()) {
+                    Log.d("Camera", "Image successfully sent to server");
+                    Toast.makeText(CameraRecognition.this, "Image successfully sent to server", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d("Camera", "Image transmission failed. Response code: " + response.code() + ", Message: " + response.message());
+                    Toast.makeText(CameraRecognition.this, "Image transmission failed. Response code: " + response.code() + ", Message: " + response.message(), Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                String message = "오류: " + t.getMessage();
-                Log.e("Camera", message);
-                Toast.makeText(CameraRecognition.this, message, Toast.LENGTH_SHORT).show();
+                Log.e("Camera", "Error: " + t.getMessage());
+                Toast.makeText(CameraRecognition.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
-
-
 }
