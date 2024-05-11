@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -57,6 +58,10 @@
 <!--&lt;!&ndash;             <category android:name="android.intent.category.LAUNCHER" />&ndash;&gt;-->
 <!--&lt;!&ndash;             </intent-filter>&ndash;&gt;-->
 <!--        </activity>-->
+        <activity
+            android:name=".raspiBluetooth"
+            android:exported="false">
+        </activity>
         <activity
             android:name=".CameraRecognition"
             android:exported="false">

@@ -44,13 +44,7 @@ public class TextToSpeech extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override public void onClick(View v) {
                 String text = txtText.getText().toString();
-//                String text = "한성대입구역";
-                // 자모 분리 코드 추가 부분
-                List<List<String>> jamoSplit = JamoUtils.split(text.trim()); // str에서 개행 문자 제거 후 자모 분리
-                for(List<String> jamoSet : jamoSplit)
-                {
-                    Log.d(TAG,""+jamoSet);
-                }
+//                String text = "한성대입구역"
 
 
                 tts.setPitch(1.0f);

@@ -33,6 +33,15 @@ public class LocationTrackingActivity extends AppCompatActivity implements OnMap
     private FusedLocationSource locationSource; //위치 반환
     private  static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
 
+    public String getSubwayName() {
+        return subwayName;
+    }
+
+    public void setSubwayName(String subwayName) {
+        this.subwayName = subwayName;
+    }
+
+    private String subwayName;
     private double la,lo; //위도 경도
 
     public double getLatitude() {
@@ -71,8 +80,6 @@ public class LocationTrackingActivity extends AppCompatActivity implements OnMap
         }
         mapFragment.getMapAsync(this);
         locationSource = new FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE);
-
-        sendSubwayRequest();
     }
 
 
@@ -91,11 +98,13 @@ public class LocationTrackingActivity extends AppCompatActivity implements OnMap
                 setLatitude(location.getLatitude());
                 setLongitude(location.getLongitude());
 
-                //Toast.makeText(getApplicationContext(),getLatitude() + "," + getLongitude(),Toast.LENGTH_SHORT).show(); //위도 경도를 토스트 메시지로 알려준다
+                sendSubwayRequest();
+
+                Toast.makeText(getApplicationContext(),getLatitude() + "," + getLongitude(),Toast.LENGTH_SHORT).show(); //위도 경도를 토스트 메시지로 알려준다
+                Log.d( TAG, getLatitude() + "," + getLongitude());
             }
 
         });
-
 
     }
 
@@ -114,11 +123,15 @@ public class LocationTrackingActivity extends AppCompatActivity implements OnMap
     }
 
     public void sendSubwayRequest() {
-        double locationX = 37.588380;
-        double locationY = 127.006751;
+        double locationX = getLatitude();
+        double locationY = getLongitude();
+        String id = "test";
+
+        Log.d(TAG, "서버 요청 전송 - 위도: " + locationX + ", 경도: " + locationY);
+
 
         Retrofit_subway_interface service = Retrofit_subway.getInstance().create(Retrofit_subway_interface.class);
-        Call<xy_model> call = service.test_api_get(locationX, locationY);
+        Call<xy_model> call = service.test_api_get(id,locationX, locationY);
         call.enqueue(new Callback<xy_model>() {
             @Override
             public void onResponse(Call<xy_model> call, Response<xy_model> response) {
@@ -127,21 +140,13 @@ public class LocationTrackingActivity extends AppCompatActivity implements OnMap
                     Log.d(TAG, "서버 응답 상태 코드: " + statusCode);
 
                     xy_model result = response.body();
-                    String str;
 
                     // 기존 Android 코드 부분
                     if (result != null) {
                         Log.d(TAG, "서버 응답 본문: " + result.toString());
-                        str = result.getSubwayName() + "\n"; // 예를 들어 "한성대입구역\n"
-                        textView.setText(str); // 텍스트 뷰에 문자열을 설정
+                        setSubwayName(result.getSubwayName()); // 예를 들어 "한성대입구역\n"
+                        textView.setText(getSubwayName()+"\n"); // 텍스트 뷰에 문자열을 설정
 
-                        // 자모 분리 코드 추가 부분
-                        List<List<String>> jamoSplit = JamoUtils.split(str.trim()); // str에서 개행 문자 제거 후 자모 분리
-                        StringBuilder sb = new StringBuilder();
-                        for (List<String> jamo : jamoSplit) {
-                            sb.append(String.join(",", jamo)).append("\n"); // 자모를 쉼표로 연결하여 한 글자씩 줄바꿈 추가
-                        }
-                        Log.d(TAG, "분리된 자모:\n" + sb.toString());
                     } else {
                         Log.d(TAG, "서버 응답 본문이 비어 있습니다.");
                     }

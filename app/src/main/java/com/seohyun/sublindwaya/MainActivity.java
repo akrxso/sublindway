@@ -50,6 +50,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final Button bluetoothBtn = findViewById(R.id.bluetoothBtn);
+        bluetoothBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, raspiBluetooth.class);
+                // 새로운 액티비티 시작
+                startActivity(intent);
+            }
+        });
+
     }
 
 }
