@@ -53,18 +53,6 @@ public class CameraRecognition extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
-                dispatchTakePictureIntent();
-            } else {
-                Toast.makeText(this, "Camera permission is required to use this feature. Please enable it in settings.", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -78,7 +66,6 @@ public class CameraRecognition extends AppCompatActivity {
             }
         }
     }
-
     private Uri createImageFileUri() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String fileName = "JPEG_" + timeStamp;
@@ -95,11 +82,12 @@ public class CameraRecognition extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            sendImageToServer(photoURI);
+            // Get the userId from UserManager
+            String kakaoId = UserManager.getInstance().getUserId();
+            sendImageToServer(photoURI, kakaoId, 35.422, 125.084);
             Toast.makeText(this, "Image sent to server.", Toast.LENGTH_SHORT).show();
         }
     }
-
     private byte[] compressImage(Uri imageUri) {
         try (InputStream inputStream = getContentResolver().openInputStream(imageUri)) {
             Bitmap original = BitmapFactory.decodeStream(inputStream);
@@ -112,18 +100,21 @@ public class CameraRecognition extends AppCompatActivity {
         }
     }
 
-    private void sendImageToServer(Uri imageUri) {
+    private void sendImageToServer(Uri imageUri, String kakaoId, double locationX, double locationY) {
         byte[] imageData = compressImage(imageUri);
         if (imageData == null) {
             Toast.makeText(this, "Failed to compress image.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), imageData);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
         MultipartBody.Part body = MultipartBody.Part.createFormData("image", "filename.jpg", requestFile);
+        RequestBody kakaoIdBody = RequestBody.create(MediaType.parse("text/plain"), kakaoId);
+        RequestBody locationXBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(locationX));
+        RequestBody locationYBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(locationY));
 
         Retrofit_send_img service = Retrofit_subway.getSendImgService();
-        Call<String> call = service.test_send_img(body);
+        Call<String> call = service.test_send_img(body, kakaoIdBody, locationXBody, locationYBody);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

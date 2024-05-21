@@ -1,6 +1,7 @@
 package com.seohyun.sublindwaya;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -11,7 +12,13 @@ public interface Retrofit_send_img {
 
     @Multipart
     @POST("send-subways-image") // 수정된 파일 경로
-    Call<String> test_send_img(
-            @Part MultipartBody.Part file
+//    Call<String> test_send_img(
+//            @Part MultipartBody.Part file
+//    );
+        Call<String> test_send_img(
+            @Part MultipartBody.Part file,
+            @Part("kakaoId") RequestBody kakaoId,
+            @Part("locationX") RequestBody locationX,
+            @Part("locationY") RequestBody locationY
     );
 }

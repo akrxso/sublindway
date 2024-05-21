@@ -48,20 +48,17 @@
         </provider>
 
 
-        <!--        <activity-->
-<!--            android:name=".raspiBluetooth"-->
-<!--            android:exported="false">-->
-<!--&lt;!&ndash;             <intent-filter>&ndash;&gt;-->
-<!--&lt;!&ndash;             <action android:name="android.intent.action.MAIN" />&ndash;&gt;-->
-
-
-<!--&lt;!&ndash;             <category android:name="android.intent.category.LAUNCHER" />&ndash;&gt;-->
-<!--&lt;!&ndash;             </intent-filter>&ndash;&gt;-->
-<!--        </activity>-->
         <activity
             android:name=".raspiBluetooth"
             android:exported="false">
+<!--             <intent-filter>-->
+<!--             <action android:name="android.intent.action.MAIN" />-->
+
+
+<!--             <category android:name="android.intent.category.LAUNCHER" />-->
+<!--             </intent-filter>-->
         </activity>
+
         <activity
             android:name=".CameraRecognition"
             android:exported="false">
@@ -88,12 +85,12 @@
             android:name=".Login"
             android:exported="true">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
+             <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
 
 
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+             <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
         </activity>
         <activity
             android:name=".LocationWeb"
@@ -118,7 +115,7 @@
 
             <meta-data
                 android:name="com.kakao.vectormap.APP_KEY"
-                android:value="47dc23bd540343a458fdd1d1ac570e31" />
+                android:value="b3116e93a5aacdd153057e7d197c2210" />
         </activity>
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
@@ -132,7 +129,7 @@
                 <!-- Redirect URI: "kakao{NATIVE_APP_KEY}://oauth" -->
                 <data
                     android:host="oauth"
-                    android:scheme="kakao47dc23bd540343a458fdd1d1ac570e31" />
+                    android:scheme="kakaob3116e93a5aacdd153057e7d197c2210" />
             </intent-filter>
         </activity>
 

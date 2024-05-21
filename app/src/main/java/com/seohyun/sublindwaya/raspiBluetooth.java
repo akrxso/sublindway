@@ -14,6 +14,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,176 +26,106 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
-public class raspiBluetooth extends AppCompatActivity {
+public class raspiBluetooth  {
+    private static final String TAG = "MY_APP_DEBUG_TAG";
+    private Handler handler; // handler that gets info from Bluetooth service
 
-    String TAG = "raspiBluetooth";
-    UUID BT_MODULE_UUID = UUID.fromString("00001133-0000-1000-8000-00805f9b34fb"); // "random" unique identifier
+    // Defines several constants used when transmitting messages between the
+    // service and the UI.
+    private interface MessageConstants {
+        public static final int MESSAGE_READ = 0;
+        public static final int MESSAGE_WRITE = 1;
+        public static final int MESSAGE_TOAST = 2;
 
-    TextView textStatus;
-    Button btnParied, btnSearch, btnSend;
-    ListView listView;
-
-    BluetoothAdapter btAdapter;
-    Set<BluetoothDevice> pairedDevices;
-    ArrayAdapter<String> btArrayAdapter;
-    ArrayList<String> deviceAddressArray;
-
-    private final static int REQUEST_ENABLE_BT = 1;
-    BluetoothSocket btSocket = null;
-    ConnectedThread connectedThread;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_raspi_bluetooth);
-
-        // Get permission
-        String[] permission_list = {
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.BLUETOOTH_CONNECT,
-                Manifest.permission.BLUETOOTH_ADMIN
-        };
-        ActivityCompat.requestPermissions(raspiBluetooth.this, permission_list, 1);
-
-        // Enable bluetooth
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (btAdapter != null && !btAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-
-        // Setup UI
-        textStatus = (TextView) findViewById(R.id.text_status);
-        btnParied = (Button) findViewById(R.id.btn_paired);
-        btnSearch = (Button) findViewById(R.id.btn_search);
-        btnSend = (Button) findViewById(R.id.btn_send);
-        listView = (ListView) findViewById(R.id.listview);
-
-        // Setup ArrayAdapter
-        btArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
-        deviceAddressArray = new ArrayList<>();
-        listView.setAdapter(btArrayAdapter);
-        listView.setOnItemClickListener(new myOnItemClickListener());
+        // ... (Add other message types here as needed.)
     }
 
-    public void onClickButtonPaired(View view) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
-            btArrayAdapter.clear();
-            if (deviceAddressArray != null) {
-                deviceAddressArray.clear();
+    private class ConnectedThread extends Thread {
+        private final BluetoothSocket mmSocket;
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+        private byte[] mmBuffer; // mmBuffer store for the stream
+
+        public ConnectedThread(BluetoothSocket socket) {
+            mmSocket = socket;
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            // Get the input and output streams; using temp objects because
+            // member streams are final.
+            try {
+                tmpIn = socket.getInputStream();
+            } catch (IOException e) {
+                Log.e(TAG, "Error occurred when creating input stream", e);
             }
-            pairedDevices = btAdapter.getBondedDevices();
-            if (pairedDevices.size() > 0) {
-                for (BluetoothDevice device : pairedDevices) {
-                    String deviceName = device.getName();
-                    String deviceHardwareAddress = device.getAddress(); // MAC address
-                    btArrayAdapter.add(deviceName + "\n" + deviceHardwareAddress);
-                    deviceAddressArray.add(deviceHardwareAddress);
-                }
+            try {
+                tmpOut = socket.getOutputStream();
+            } catch (IOException e) {
+                Log.e(TAG, "Error occurred when creating output stream", e);
             }
-        } else {
-            Toast.makeText(this, "Bluetooth connect permission is required", Toast.LENGTH_SHORT).show();
+
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
         }
-    }
 
-    public void onClickButtonSearch(View view) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
-            if (btAdapter.isDiscovering()) {
-                btAdapter.cancelDiscovery();
-            } else {
-                if (btAdapter.isEnabled()) {
-                    btAdapter.startDiscovery();
-                    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                    registerReceiver(receiver, filter);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Bluetooth is not on", Toast.LENGTH_SHORT).show();
-                }
-            }
-        } else {
-            Toast.makeText(this, "Bluetooth scan permission is required", Toast.LENGTH_SHORT).show();
-        }
-    }
+        public void run() {
+            mmBuffer = new byte[1024];
+            int numBytes; // bytes returned from read()
 
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (ActivityCompat.checkSelfPermission(raspiBluetooth.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                btArrayAdapter.add(deviceName + "\n" + deviceHardwareAddress);
-                deviceAddressArray.add(deviceHardwareAddress);
-                btArrayAdapter.notifyDataSetChanged();
-            }
-        }
-    };
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(receiver);
-    }
-
-    public class myOnItemClickListener implements AdapterView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (ActivityCompat.checkSelfPermission(raspiBluetooth.this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
-                textStatus.setText("Trying to connect...");
-
-                final String address = deviceAddressArray.get(position); // get address
-                BluetoothDevice device = btAdapter.getRemoteDevice(address);
-
-                // create & connect socket
+            // Keep listening to the InputStream until an exception occurs.
+            while (true) {
                 try {
-                    btSocket = createBluetoothSocket(device);
-                    btSocket.connect();
-                    textStatus.setText("Connected to " + device.getName());
-                    connectedThread = new ConnectedThread(btSocket);
-                    connectedThread.start();
+                    // Read from the InputStream.
+                    numBytes = mmInStream.read(mmBuffer);
+                    // Send the obtained bytes to the UI activity.
+                    Message readMsg = handler.obtainMessage(
+                            MessageConstants.MESSAGE_READ, numBytes, -1,
+                            mmBuffer);
+                    readMsg.sendToTarget();
                 } catch (IOException e) {
-                    textStatus.setText("Connection failed!");
-                    Log.e(TAG, "Could not connect to device", e);
+                    Log.d(TAG, "Input stream was disconnected", e);
+                    break;
                 }
-            } else {
-                Toast.makeText(raspiBluetooth.this, "Bluetooth connect permission is required", Toast.LENGTH_SHORT).show();
             }
         }
-    }
 
-    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-        try {
-            final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", UUID.class);
-            return (BluetoothSocket) m.invoke(device, BT_MODULE_UUID);
-        } catch (Exception e) {
-            Log.e(TAG, "Could not create Insecure RFComm Connection", e);
-            throw new IOException(e);
+        // Call this from the main activity to send data to the remote device.
+        public void write(byte[] bytes) {
+            try {
+                mmOutStream.write(bytes);
+
+                // Share the sent message with the UI activity.
+                Message writtenMsg = handler.obtainMessage(
+                        MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
+                writtenMsg.sendToTarget();
+            } catch (IOException e) {
+                Log.e(TAG, "Error occurred when sending data", e);
+
+                // Send a failure message back to the activity.
+                Message writeErrorMsg =
+                        handler.obtainMessage(MessageConstants.MESSAGE_TOAST);
+                Bundle bundle = new Bundle();
+                bundle.putString("toast",
+                        "Couldn't send data to the other device");
+                writeErrorMsg.setData(bundle);
+                handler.sendMessage(writeErrorMsg);
+            }
+        }
+
+        // Call this method from the main activity to shut down the connection.
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Could not close the connect socket", e);
+            }
         }
     }
 }
-
