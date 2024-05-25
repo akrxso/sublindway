@@ -92,18 +92,18 @@
              <category android:name="android.intent.category.LAUNCHER" />
              </intent-filter>
         </activity>
-        <activity
-            android:name=".LocationWeb"
-            android:exported="false" /> <!-- <activity -->
+<!--        <activity-->
+<!--            android:name=".LocationWeb"-->
+<!--            android:exported="false" /> &lt;!&ndash; <activity &ndash;&gt;-->
         <!-- android:name=".LocationTrackingActivity" -->
         <!-- android:exported="true" > -->
         <!-- <intent-filter> -->
         <!-- <action android:name="android.intent.action.MAIN" /> -->
         <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
         <!-- </intent-filter> -->
-        <activity
-            android:name=".LocationTrackingActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".LocationTrackingActivity"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".MainActivity"
             android:exported="true">

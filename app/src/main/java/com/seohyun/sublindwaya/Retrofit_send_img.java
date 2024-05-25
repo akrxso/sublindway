@@ -8,7 +8,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 public interface Retrofit_send_img {
-    String BASE_URL = "http://13.209.19.20:8079/"; // 자신의 서버 IP 또는 도메인
+    String BASE_URL = "http://15.164.219.39:8079/"; // 자신의 서버 IP 또는 도메인
 
     @Multipart
     @POST("send-subways-image") // 수정된 파일 경로
