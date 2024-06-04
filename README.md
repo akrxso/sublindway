@@ -18,7 +18,7 @@
 ## 팀원
 [김우현(팀장)](https://github.com/woody6624) - 백엔드, 하드웨어 구현 및 배포 \
 [김서현](https://github.com/akrxso) - 앱, 하드웨어 설계 및 구현 \
-[김현서](https://github.com/eeazzy) - 앱, 하드웨어 설계 구현 \
+[김현서](https://github.com/eeazzy) - 앱, 하드웨어 설계 및 구현 \
 [박지윤](https://github.com/zzizi6) - 웹, 하드웨어 구현 및 배포
 
 ## 화면
