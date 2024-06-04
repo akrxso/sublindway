@@ -1,6 +1,6 @@
 <h1 align="center">GreenBoogie</h1>
 <p align="center">2024년도 캡스톤 디자인 장려상 수상 작품<br>그린부기는 시각장애인🧑🏻‍🦯과 비장애인이 지하철을 편리하고 안전하게 이용할 수 있도록 제작된 편의증집 앱, 웹 서비스입니다.</p>
-![4 69조_QR코드](https://github.com/zzizi6/sublindway_A/assets/103871252/a118b745-33e3-4116-b887-2e94e1f07b88)
+<img src="https://github.com/zzizi6/sublindway_A/assets/103871252/a118b745-33e3-4116-b887-2e94e1f07b88" alt="4 69조_QR코드">
 
 
 ## 기대 효과
