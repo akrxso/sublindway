@@ -19,7 +19,7 @@ public class Login extends AppCompatActivity {
     private static final String TAG = "Login";
 
     private TextView userIdText;
-    private View loginButton, logoutButton;
+    private View loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,6 @@ public class Login extends AppCompatActivity {
 
         userIdText = findViewById(R.id.userId);
         loginButton = findViewById(R.id.login);
-        logoutButton = findViewById(R.id.logout);
 
         setupLoginLogout();
         updateKakaoLoginUi();
@@ -67,13 +66,6 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        logoutButton.setOnClickListener(view -> {
-            UserApiClient.getInstance().logout(throwable -> {
-                UserManager.getInstance().clear();
-                updateKakaoLoginUi();
-                return null;
-            });
-        });
     }
 
     private void updateKakaoLoginUi() {
@@ -85,7 +77,6 @@ public class Login extends AppCompatActivity {
 
                 userIdText.setText(UserManager.getInstance().getUserId());
                 loginButton.setVisibility(View.GONE);
-                logoutButton.setVisibility(View.VISIBLE);
 
                 // 로그인 성공 후 MainActivity로 이동
                 navigateToMainActivity();
@@ -94,7 +85,6 @@ public class Login extends AppCompatActivity {
                 UserManager.getInstance().clear();
                 userIdText.setText(null);
                 loginButton.setVisibility(View.VISIBLE);
-                logoutButton.setVisibility(View.GONE);
             }
             return null;
         });

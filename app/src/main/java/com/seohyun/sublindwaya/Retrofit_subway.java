@@ -13,9 +13,14 @@ public class Retrofit_subway {
 
     public static Retrofit getInstance() {
         if (retrofit == null) {
+            // Create a custom Gson instance with lenient parsing
+            Gson gson = new GsonBuilder()
+                    .setLenient()
+                    .create();
+
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson)) // Use the custom Gson instance
                     .build();
         }
         return retrofit;
