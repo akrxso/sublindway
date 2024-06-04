@@ -1,6 +1,18 @@
 <h1>GreenBoogie</h1>
 
 
+
+## 기대 효과
+- 시각장애인의 독립적 지하철 이용으로 일상의 편의성 증진 기대
+- 보호자가 웹 또는 모바일로 사용자의 실시간 위치를 확인 가능해 긴급상황 대응및 안전 확보
+- 시끄러운 지하철 상황에 시각장애인 이외의 다양한 사용자들의 상용화 기대
+
+## 화면
+<img width="921" alt="스크린샷 2024-05-30 오후 6 59 19" src="https://github.com/zzizi6/sublindway_A/assets/130573661/c404e766-e942-4a64-a908-76ce1100c330">
+
+## 구조
+<img width="846" alt="스크린샷 2024-05-30 오후 7 12 21" src="https://github.com/zzizi6/sublindway_A/assets/130573661/b1ef0fd4-bede-4682-aba5-69208844dc34">
+
 ## 개발 환경
 - Window ![Windows](https://img.icons8.com/color/20/000000/windows-10.png)
 - Mac OS ![Mac OS](https://img.icons8.com/color/20/000000/mac-os.png)
