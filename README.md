@@ -1,4 +1,4 @@
-<h1>GreenBoogie</h1>
+<center><h1>GreenBoogie</h1></center>
 
 
 
