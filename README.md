@@ -57,7 +57,7 @@
 
 ## 이미지 및 딥러닝
 - AWS S3 ![AWS S3](https://img.icons8.com/color/20/000000/amazon-s3.png)
-- YOLOv5 ![YOLO](https://github.com/ultralytics/yolov5/raw/master/data/images/yolov5_logo.png)
+- YOLOv5
 
 ## 데이터베이스
 - AWS RDS - MySQL ![MySQL](https://img.icons8.com/color/20/000000/mysql-logo.png)
