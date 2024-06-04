@@ -15,10 +15,10 @@
 <img width="846" alt="스크린샷 2024-05-30 오후 7 12 21" src="https://github.com/zzizi6/sublindway_A/assets/130573661/b1ef0fd4-bede-4682-aba5-69208844dc34">
 
 ## 팀원
-[김우현(팀장)](https://github.com/woody6624)
-[김서현](https://github.com/akrxso)
-[김현서](https://github.com/eeazzy)
-[박지윤](https://github.com/zzizi6)
+[김우현(팀장)](https://github.com/woody6624) \
+[김서현](https://github.com/akrxso) \
+[김현서](https://github.com/eeazzy) \
+[박지윤](https://github.com/zzizi6) \
 
 ## 프로젝트 깃허브
 백엔드 - https://github.com/woody6624/Backend_Sublindway_Server
