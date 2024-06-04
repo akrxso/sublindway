@@ -16,10 +16,10 @@
 - 시끄러운 지하철 상황에 시각장애인 이외의 다양한 사용자들의 상용화 기대
 
 ## 팀원
-[김우현(팀장)](https://github.com/woody6624) - 백엔드, 하드웨어 구현 및 배포 \
-[김서현](https://github.com/akrxso) - 앱, 하드웨어 설계 및 구현 \
-[김현서](https://github.com/eeazzy) - 앱, 하드웨어 설계 및 구현 \
-[박지윤](https://github.com/zzizi6) - 웹, 하드웨어 구현 및 배포
+- [김우현(팀장)](https://github.com/woody6624) - 백엔드, 하드웨어 구현 및 배포 \
+- [김서현](https://github.com/akrxso) - 앱, 하드웨어 설계 및 구현 \
+- [김현서](https://github.com/eeazzy) - 앱, 하드웨어 설계 및 구현 \
+- [박지윤](https://github.com/zzizi6) - 웹, 하드웨어 구현 및 배포
 
 ## 화면
 <img width="921" alt="스크린샷 2024-05-30 오후 6 59 19" src="https://github.com/zzizi6/sublindway_A/assets/130573661/c404e766-e942-4a64-a908-76ce1100c330">
