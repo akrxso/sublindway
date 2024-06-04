@@ -3,7 +3,7 @@
 <p align="center">2024년도 캡스톤 디자인 장려상 수상 작품🥉<br>그린부기는 시각장애인🧑🏻‍🦯과 비장애인이 지하철을 편리하고 안전하게 이용할 수 있도록 제작된 편의증집 앱, 웹 서비스입니다.</p>
 
 <div align="right">
-    <img src="https://github.com/zzizi6/sublindway_A/assets/130573661/5fc1096b-7b75-4e23-bdc3-8c786a9354fe" width="45" height="45">
+    <img src="https://github.com/zzizi6/sublindway_A/assets/130573661/5fc1096b-7b75-4e23-bdc3-8c786a9354fe" width="55" height="55">
 </div>
 
 
